@@ -584,59 +584,6 @@ try:
                     else:
                         flagdone = True
 
-        vurus2 = True
-        while vurus2 == True and sonflag == True:
-            print_3d_list([B, my_big_list2[1]])
-            print_player_turn_to_strike(2)
-            print_choose_target_coordinates()
-            try:
-                coordinate_by_x2, coordinate_by_y2 = input().split()
-                coordinate_by_x2 = int(coordinate_by_x2)
-                coordinate_by_y2 = int(coordinate_by_y2)
-            except:
-                print_incorrect_input_format()
-                continue
-
-            if coordinate_by_x2<0 or coordinate_by_x2>11 or coordinate_by_y2<0 or coordinate_by_y2>11:
-                print_incorrect_coordinates()
-                continue
-
-            if (coordinate_by_x2, coordinate_by_y2) in stk2:
-                print_tile_already_struck()
-
-            else:
-                stk2.add((coordinate_by_x2, coordinate_by_y2))
-                if (coordinate_by_x2, coordinate_by_y2) not in coordinates_occupied:
-                    print_miss()
-                    my_big_list1[0][coordinate_by_y2 - 1][coordinate_by_x2 - 1] = 'O'
-                    B[coordinate_by_y2 - 1][coordinate_by_x2 - 1] = 'O'
-                    stk = False
-                    cont = False
-                else:
-                    coordinates_occupied.remove((coordinate_by_x2, coordinate_by_y2))
-                    print_hit()
-                    my_big_list1[0][coordinate_by_y2 - 1][coordinate_by_x2 - 1] = '!'
-                    B[coordinate_by_y2 - 1][coordinate_by_x2 - 1] = '!'
-                    vurus2 = True
-                    devamedicem2 = True
-                    if coordinates_occupied == []:
-                        print_3d_list([B, my_big_list2[1]])
-                        print_player_won(2)
-                        print_thanks_for_playing()
-                        cont = False
-
-                        break
-                flagdone2 = True
-                while flagdone2 == True and cont == True and i == False:
-                    print_type_done_to_yield(1)
-                    passing2 = input().lower()
-                    if passing2 == 'done':
-                        flagdone2 = False
-
-                    else:
-                        flagdone2 = True
-
-
     # DO_NOT_EDIT_ANYTHING_BELOW_THIS_LINE
 except:
     f.close()
