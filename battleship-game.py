@@ -216,7 +216,6 @@ try:
     is_placement_confirmed1 = False
     occupied_coordinates1 = []
 
-    # Player 1 ship placement
     while not is_placement_confirmed1:
         current_board1 = [[['-' for _ in range(10)] for _ in range(10)], [['-' for _ in range(10)] for _ in range(10)]]
         print_3d_list(current_board1)
