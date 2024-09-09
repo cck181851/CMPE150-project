@@ -209,381 +209,327 @@ print_rules()
 
 
 
-try:  
-    T = [[['-' for i in range(10)] for j in range(10)], [['-' for l in range(10)] for m in range(10)]]
+try:
+    player1_board = [[['-' for _ in range(10)] for _ in range(10)], [['-' for _ in range(10)] for _ in range(10)]]
+    player2_board = [[['-' for _ in range(10)] for _ in range(10)], [['-' for _ in range(10)] for _ in range(10)]]
 
-    confirm = False
-    coordinates_occupied = []
-    while confirm == False:
-        my_big_list1 = [[['-' for i in range(10)] for j in range(10)], [['-' for l in range(10)] for m in range(10)]]
-        print_3d_list(my_big_list1)
- 
-        used_ships = []
-        title_used_list = []
+    is_placement_confirmed1 = False
+    occupied_coordinates1 = []
 
-        case = 0
-        while case < 5:
-            flag = True
-            case += 1
+    # Player 1 ship placement
+    while not is_placement_confirmed1:
+        current_board1 = [[['-' for _ in range(10)] for _ in range(10)], [['-' for _ in range(10)] for _ in range(10)]]
+        print_3d_list(current_board1)
+
+        placed_ships1 = []
+        available_ships1 = []
+
+        case_number = 0
+        while case_number < 5:
+            is_input_valid = True
+            case_number += 1
             print_ships_to_be_placed()
-            list_ships = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer']
-            low_list_ships = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer']
-            displayed_list_ships = [chara for chara in list_ships if chara not in title_used_list]
-            residual_list_ships = [char for char in low_list_ships if char not in used_ships]
-            for j in displayed_list_ships:
-                print_single_element(j)
+            ship_list1 = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer']
+            lower_ship_list1 = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer']
+            displayable_ships1 = [ship for ship in ship_list1 if ship not in available_ships1]
+            remaining_ships1 = [ship for ship in lower_ship_list1 if ship not in placed_ships1]
+            for ship in displayable_ships1:
+                print_single_element(ship)
             print_empty_line()
             print_player_turn_to_place(1)
             print_to_place_ships()
-            my_str = input()
-            my_list = my_str.split()
-            if len(my_list) < 4:
+            user_input = input()
+            input_list = user_input.split()
+            if len(input_list) < 4:
                 print_incorrect_input_format()
-                case -= 1
-                flag = False
-                print_3d_list(my_big_list1)
+                case_number -= 1
+                is_input_valid = False
+                print_3d_list(current_board1)
             else:
-                name = my_list[0]
+                ship_name = input_list[0]
+                x_coordinate = input_list[1]
+                y_coordinate = input_list[2]
 
-                coordinate_x = my_list[1]
-                coordinate_y = my_list[2]
-                if flag == True:
+                if is_input_valid:
                     try:
-                        coordinate_x = int(coordinate_x)
-                        coordinate_y = int(coordinate_y)
+                        x_coordinate = int(x_coordinate)
+                        y_coordinate = int(y_coordinate)
                     except:
                         print_incorrect_input_format()
-                        case -= 1
-                        flag = False
-                if flag == True:
-                    if (int(coordinate_x) not in [z for z in range(1, 11)]) or (
-                            int(coordinate_y) not in [z for z in range(1, 11)]):
+                        case_number -= 1
+                        is_input_valid = False
+
+                if is_input_valid:
+                    if (x_coordinate not in range(1, 11)) or (y_coordinate not in range(1, 11)):
                         print_incorrect_coordinates()
-                        case -= 1
-                        flag = False
+                        case_number -= 1
+                        is_input_valid = False
 
-                if name.lower() in residual_list_ships:
-                    if name.lower() == low_list_ships[0]:
-                        length = 5
-                    elif name.lower() == low_list_ships[1]:
-                        length = 4
-                    elif name.lower() == low_list_ships[2] or name.lower() == low_list_ships[3]:
-                        length = 3
+                if ship_name.lower() in remaining_ships1:
+                    if ship_name.lower() == lower_ship_list1[0]:
+                        ship_length = 5
+                    elif ship_name.lower() == lower_ship_list1[1]:
+                        ship_length = 4
+                    elif ship_name.lower() in lower_ship_list1[2:4]:
+                        ship_length = 3
                     else:
-                        length = 2
-
-                elif name.lower() in used_ships:
-                    if flag == True:
-                        print_ship_is_already_placed(name.title())
-                        case -= 1
-                        flag = False
-
+                        ship_length = 2
+                elif ship_name.lower() in placed_ships1:
+                    if is_input_valid:
+                        print_ship_is_already_placed(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
                 else:
-                    length = 0
-                    if flag == True:
+                    ship_length = 0
+                    if is_input_valid:
                         print_incorrect_ship_name()
-                        case -= 1
-                        flag = False
+                        case_number -= 1
+                        is_input_valid = False
 
-                orientation = my_list[3]
-                if orientation not in ['h', 'v'] and flag == True:
+                orientation = input_list[3]
+                if orientation not in ['h', 'v'] and is_input_valid:
                     print_incorrect_orientation()
-                    case -= 1
-                    flag = False
+                    case_number -= 1
+                    is_input_valid = False
 
-                if flag == True:
-                    if orientation == 'h' and coordinate_x <= 10 and int(coordinate_x) + length > 11:
-                        print_ship_cannot_be_placed_outside(name.title())
-                        case -= 1
-                        flag = False
-                if flag == True:
-                    if orientation == 'v' and coordinate_y <= 10 and int(coordinate_y) + length > 11:
-                        print_ship_cannot_be_placed_outside(name.title())
-                        case -= 1
-                        flag = False
+                if is_input_valid:
+                    if orientation == 'h' and x_coordinate <= 10 and x_coordinate + ship_length > 11:
+                        print_ship_cannot_be_placed_outside(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
+                    if orientation == 'v' and y_coordinate <= 10 and y_coordinate + ship_length > 11:
+                        print_ship_cannot_be_placed_outside(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
 
-               
-                if flag == True and orientation == 'h':
-                    new_ship_list = [(coordinate_x + inc, coordinate_y) for inc in range(length)]
-                    flag1 = True
-                    for ea in new_ship_list:
-                        if ea in coordinates_occupied:
-                            flag1 = False
-                            break
-                        else:
-                            flag1 = True
+                if is_input_valid and orientation == 'h':
+                    new_ship_coordinates = [(x_coordinate + i, y_coordinate) for i in range(ship_length)]
+                    if any(coord in occupied_coordinates1 for coord in new_ship_coordinates):
+                        print_ship_cannot_be_placed_occupied(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
 
-                    if flag1 == False:
-                        print_ship_cannot_be_placed_occupied(name.title())
-                        case -= 1
-                        flag = False
-                if flag == True and orientation == 'v':
-                    new_ship_list = [(coordinate_x, coordinate_y + inc) for inc in range(length)]
-                    flag1 = True
-                    for ea in new_ship_list:
-                        if ea in coordinates_occupied:
-                            flag1 = False
-                            break
-                        else:
-                            flag1 = True
+                if is_input_valid and orientation == 'v':
+                    new_ship_coordinates = [(x_coordinate, y_coordinate + i) for i in range(ship_length)]
+                    if any(coord in occupied_coordinates1 for coord in new_ship_coordinates):
+                        print_ship_cannot_be_placed_occupied(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
 
-                    if flag1 == False:
-                        print_ship_cannot_be_placed_occupied(name.title())
-                        case -= 1
-                        flag = False
+                if orientation == 'h' and is_input_valid and ship_length > 1:
+                    for i in range(ship_length):
+                        current_board1[0][y_coordinate - 1][x_coordinate - 1 + i] = '#'
+                        placed_ships1.append(ship_name.lower())
+                        available_ships1 = [ship.title() for ship in placed_ships1]
+                    for i in range(ship_length):
+                        occupied_coordinates1.append((x_coordinate + i, y_coordinate))
 
-                if orientation == 'h' and flag == True and length > 1:
-                    for i in range(length):
-                        my_big_list1[0][int(coordinate_y) - 1][int(coordinate_x) - 1 + i] = '#'
-                        used_ships.append(name.lower())
-                        title_used_list = [elem.title() for elem in used_ships]
-                    for l in range(length):
-                        coordinates_occupied.append((coordinate_x + l, coordinate_y))
+                if orientation == 'v' and is_input_valid and ship_length > 1:
+                    for i in range(ship_length):
+                        current_board1[0][y_coordinate - 1 + i][x_coordinate - 1] = '#'
+                        placed_ships1.append(ship_name.lower())
+                        available_ships1 = [ship.title() for ship in placed_ships1]
+                    for i in range(ship_length):
+                        occupied_coordinates1.append((x_coordinate, y_coordinate + i))
+                
+                print_3d_list(current_board1)
 
-                if orientation == 'v' and flag == True and length > 1:
-                    for i in range(length):
-                        my_big_list1[0][(int(coordinate_y) - 1 + i)][int(coordinate_x) - 1] = '#'
-                        used_ships.append(name.lower())
-                        title_used_list = [elem.title() for elem in used_ships]
-                    for l in range(length):
-                        coordinates_occupied.append((coordinate_x, coordinate_y + l))
-                print_3d_list(my_big_list1)
-        biflag = None
-        while biflag == True or biflag == None:
+        while True:
             print_confirm_placement()
             confirmation = input()
-            if confirmation == 'N' or confirmation == 'n':
-                biflag = False
-                coordinates_occupied = []
-                confirm = False
+            if confirmation in ['N', 'n']:
+                occupied_coordinates1 = []
+                is_placement_confirmed1 = False
+                break
+            elif confirmation in ['Y', 'y']:
+                is_placement_confirmed1 = True
+                break
 
-            elif confirmation == 'Y' or confirmation == 'y':
-                biflag = False
-                confirm = True
-            else:
+    is_placement_confirmed2 = False
+    occupied_coordinates2 = []
 
-                biflag = True
+    while not is_placement_confirmed2:
+        current_board2 = [[['-' for _ in range(10)] for _ in range(10)], [['-' for _ in range(10)] for _ in range(10)]]
+        print_3d_list(current_board2)
 
+        placed_ships2 = []
+        available_ships2 = []
 
-    confirm2 = False
-    coordinates_occupied2 = []
-    while confirm2 == False:
-        my_big_list2 = [[['-' for i in range(10)] for j in range(10)], [['-' for l in range(10)] for m in range(10)]]
-        print_3d_list(my_big_list2)
-        used_ships2 = []
-        title_used_list2 = []
-
-        case = 0
-        while case < 5:
-            flag = True
-            case += 1
+        case_number = 0
+        while case_number < 5:
+            is_input_valid = True
+            case_number += 1
             print_ships_to_be_placed()
-            list_ships2 = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer']
-            low_list_ships2 = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer']
-            displayed_list_ships2 = [chara for chara in list_ships2 if chara not in title_used_list2]
-            residual_list_ships2 = [char for char in low_list_ships2 if char not in used_ships2]
-            for j in displayed_list_ships2:
-                print_single_element(j)
+            ship_list2 = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer']
+            lower_ship_list2 = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer']
+            displayable_ships2 = [ship for ship in ship_list2 if ship not in available_ships2]
+            remaining_ships2 = [ship for ship in lower_ship_list2 if ship not in placed_ships2]
+            for ship in displayable_ships2:
+                print_single_element(ship)
             print_empty_line()
             print_player_turn_to_place(2)
             print_to_place_ships()
-            my_str = input()
-            my_list = my_str.split()
-            if len(my_list) < 4:
+            user_input = input()
+            input_list = user_input.split()
+            if len(input_list) < 4:
                 print_incorrect_input_format()
-                case -= 1
-                flag = False
-                print_3d_list(my_big_list2)
+                case_number -= 1
+                is_input_valid = False
+                print_3d_list(current_board2)
             else:
-                name = my_list[0]
+                ship_name = input_list[0]
+                x_coordinate = input_list[1]
+                y_coordinate = input_list[2]
 
-                coordinate_x = my_list[1]
-                coordinate_y = my_list[2]
-                if flag == True:
+                if is_input_valid:
                     try:
-                        coordinate_x = int(coordinate_x)
-                        coordinate_y = int(coordinate_y)
+                        x_coordinate = int(x_coordinate)
+                        y_coordinate = int(y_coordinate)
                     except:
                         print_incorrect_input_format()
-                        case -= 1
-                        flag = False
-                if flag == True:
-                    if (int(coordinate_x) not in [z for z in range(1, 11)]) or (
-                            int(coordinate_y) not in [z for z in range(1, 11)]):
+                        case_number -= 1
+                        is_input_valid = False
+
+                if is_input_valid:
+                    if (x_coordinate not in range(1, 11)) or (y_coordinate not in range(1, 11)):
                         print_incorrect_coordinates()
-                        case -= 1
-                        flag = False
+                        case_number -= 1
+                        is_input_valid = False
 
-                if name.lower() in residual_list_ships2:
-                    if name.lower() == low_list_ships2[0]:
-                        length = 5
-                    elif name.lower() == low_list_ships2[1]:
-                        length = 4
-                    elif name.lower() == low_list_ships2[2] or name.lower() == low_list_ships2[3]:
-                        length = 3
+                if ship_name.lower() in remaining_ships2:
+                    if ship_name.lower() == lower_ship_list2[0]:
+                        ship_length = 5
+                    elif ship_name.lower() == lower_ship_list2[1]:
+                        ship_length = 4
+                    elif ship_name.lower() in lower_ship_list2[2:4]:
+                        ship_length = 3
                     else:
-                        length = 2
-
-                elif name.lower() in used_ships2:
-                    if flag == True:
-                        print_ship_is_already_placed(name.title())
-                        case -= 1
-                        flag = False
-
+                        ship_length = 2
+                elif ship_name.lower() in placed_ships2:
+                    if is_input_valid:
+                        print_ship_is_already_placed(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
                 else:
-                    length = 0
-                    if flag == True:
+                    ship_length = 0
+                    if is_input_valid:
                         print_incorrect_ship_name()
-                        case -= 1
-                        flag = False
+                        case_number -= 1
+                        is_input_valid = False
 
-                orientation = my_list[3]
-                if orientation not in ['h', 'v'] and flag == True:
+                orientation = input_list[3]
+                if orientation not in ['h', 'v'] and is_input_valid:
                     print_incorrect_orientation()
-                    case -= 1
-                    flag = False
+                    case_number -= 1
+                    is_input_valid = False
 
-                if flag == True:
-                    if orientation == 'h' and coordinate_x <= 10 and int(coordinate_x) + length > 11:
-                        print_ship_cannot_be_placed_outside(name.title())
-                        case -= 1
-                        flag = False
-                if flag == True:
-                    if orientation == 'v' and coordinate_y <= 10 and int(coordinate_y) + length > 11:
-                        print_ship_cannot_be_placed_outside(name.title())
-                        case -= 1
-                        flag = False
+                if is_input_valid:
+                    if orientation == 'h' and x_coordinate <= 10 and x_coordinate + ship_length > 11:
+                        print_ship_cannot_be_placed_outside(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
+                    if orientation == 'v' and y_coordinate <= 10 and y_coordinate + ship_length > 11:
+                        print_ship_cannot_be_placed_outside(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
 
-                if flag == True and orientation == 'h':
-                    new_ship_list = [(coordinate_x + inc, coordinate_y) for inc in range(length)]
-                    flag1 = True
-                    for ea in new_ship_list:
-                        if ea in coordinates_occupied2:
-                            flag1 = False
-                            break
-                        else:
-                            flag1 = True
+                if is_input_valid and orientation == 'h':
+                    new_ship_coordinates = [(x_coordinate + i, y_coordinate) for i in range(ship_length)]
+                    if any(coord in occupied_coordinates2 for coord in new_ship_coordinates):
+                        print_ship_cannot_be_placed_occupied(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
 
-                    if flag1 == False:
-                        print_ship_cannot_be_placed_occupied(name.title())
-                        case -= 1
-                        flag = False
-                if flag == True and orientation == 'v':
-                    new_ship_list = [(coordinate_x, coordinate_y + inc) for inc in range(length)]
-                    flag1 = True
-                    for ea in new_ship_list:
-                        if ea in coordinates_occupied2:
-                            flag1 = False
-                            break
-                        else:
-                            flag1 = True
+                if is_input_valid and orientation == 'v':
+                    new_ship_coordinates = [(x_coordinate, y_coordinate + i) for i in range(ship_length)]
+                    if any(coord in occupied_coordinates2 for coord in new_ship_coordinates):
+                        print_ship_cannot_be_placed_occupied(ship_name.title())
+                        case_number -= 1
+                        is_input_valid = False
 
-                    if flag1 == False:
-                        print_ship_cannot_be_placed_occupied(name.title())
-                        case -= 1
-                        flag = False
+                if orientation == 'h' and is_input_valid and ship_length > 1:
+                    for i in range(ship_length):
+                        current_board2[1][y_coordinate - 1][x_coordinate - 1 + i] = '#'
+                        placed_ships2.append(ship_name.lower())
+                        available_ships2 = [ship.title() for ship in placed_ships2]
+                    for i in range(ship_length):
+                        occupied_coordinates2.append((x_coordinate + i, y_coordinate))
 
-                if orientation == 'h' and flag == True and length > 1:
-                    for i in range(length):
-                        my_big_list2[1][int(coordinate_y) - 1][int(coordinate_x) - 1 + i] = '#'
-                        used_ships2.append(name.lower())
-                        title_used_list2 = [elem.title() for elem in used_ships2]
-                    for l in range(length):
-                        coordinates_occupied2.append((coordinate_x + l, coordinate_y))
+                if orientation == 'v' and is_input_valid and ship_length > 1:
+                    for i in range(ship_length):
+                        current_board2[1][y_coordinate - 1 + i][x_coordinate - 1] = '#'
+                        placed_ships2.append(ship_name.lower())
+                        available_ships2 = [ship.title() for ship in placed_ships2]
+                    for i in range(ship_length):
+                        occupied_coordinates2.append((x_coordinate, y_coordinate + i))
+                
+                print_3d_list(current_board2)
 
-                if orientation == 'v' and flag == True and length > 1:
-                    for i in range(length):
-                        my_big_list2[1][(int(coordinate_y) - 1 + i)][int(coordinate_x) - 1] = '#'
-                        used_ships2.append(name.lower())
-                        title_used_list2 = [elem.title() for elem in used_ships2]
-                    for l in range(length):
-                        coordinates_occupied2.append((coordinate_x, coordinate_y + l))
-                print_3d_list(my_big_list2)
-        biflag2 = None
-        while biflag2 == True or biflag2 == None:
+        while True:
             print_confirm_placement()
             confirmation = input()
-            if confirmation == 'N' or confirmation == 'n':
-                biflag2 = False
-                coordinates_occupied = []
-                confirm2 = False
-            elif confirmation == 'Y' or confirmation == 'y':
-                biflag2 = False
-                confirm2 = True
-            else:
+            if confirmation in ['N', 'n']:
+                occupied_coordinates2 = []
+                is_placement_confirmed2 = False
+                break
+            elif confirmation in ['Y', 'y']:
+                is_placement_confirmed2 = True
+                break
 
-                biflag2 = True
+    attack_board = [['-' for _ in range(10)] for _ in range(10)]
+    player1_attack_set = set()
+    player2_attack_set = set()
 
-  
+    game_active = True
+    player1_turn = True
+    while game_active:
+        is_attack_valid = True
 
-    A = [['-' for k in range(10)] for jj in range(10)]
-    B = [['-' for k in range(10)] for jj in range(10)]
-
-    i = False
-    j = False
-    cont= True
-    last = True
-    stk1 = set()
-    stk2 = set()
-
-    while cont == True:
-
-        attack = True
-
-        while attack == True:
-
-            print_3d_list([my_big_list1[0], A])
+        while is_attack_valid:
+            print_3d_list([player1_board[0], attack_board])
             print_player_turn_to_strike(1)
             print_choose_target_coordinates()
             try:
-                coordinate_by_x, coordinate_by_y = input().split()
-                coordinate_by_x = int(coordinate_by_x)
-                coordinate_by_y = int(coordinate_by_y)
+                target_x, target_y = input().split()
+                target_x = int(target_x)
+                target_y = int(target_y)
             except:
                 print_incorrect_input_format()
                 continue
 
-            if coordinate_by_x<0 or coordinate_by_x>11 or coordinate_by_y<0 or coordinate_by_y>11:
+            if target_x < 1 or target_x > 10 or target_y < 1 or target_y > 10:
                 print_incorrect_coordinates()
                 continue
 
-
-            if (coordinate_by_x, coordinate_by_y) in stk1:
+            if (target_x, target_y) in player1_attack_set:
                 print_tile_already_struck()
-
             else:
-                stk1.add((coordinate_by_x, coordinate_by_y))
-                if (coordinate_by_x, coordinate_by_y) not in coordinates_occupied2:
+                player1_attack_set.add((target_x, target_y))
+                if (target_x, target_y) not in occupied_coordinates2:
                     print_miss()
-                    my_big_list2[1][coordinate_by_y - 1][coordinate_by_x - 1] = 'O'
-                    A[coordinate_by_y - 1][coordinate_by_x - 1] = 'O'
-                    vurus = False
-                    devamedicem1 = False
+                    current_board2[1][target_y - 1][target_x - 1] = 'O'
+                    attack_board[target_y - 1][target_x - 1] = 'O'
+                    hit = False
+                    game_active = True
                 else:
-                    devamedicem1 = True
-                    coordinates_occupied2.remove((coordinate_by_x, coordinate_by_y))
+                    hit = True
+                    occupied_coordinates2.remove((target_x, target_y))
                     print_hit()
-                    my_big_list2[1][coordinate_by_y - 1][coordinate_by_x - 1] = '!'
-                    A[coordinate_by_y - 1][coordinate_by_x - 1] = '!'
-                    vurus = True
-                    if coordinates_occupied2 == []:
-                        print_3d_list([my_big_list1[0], A])
+                    current_board2[1][target_y - 1][target_x - 1] = '!'
+                    attack_board[target_y - 1][target_x - 1] = '!'
+                    if not occupied_coordinates2:
+                        print_3d_list([player1_board[0], attack_board])
                         print_player_won(1)
                         print_thanks_for_playing()
-                        bitmedi = False
-                        sonflag = False
-
+                        game_active = False
                         break
-                flagdone = True
-                while flagdone == True and bitmedi == True and devamedicem1 == False:
+
+                while hit == False:
                     print_type_done_to_yield(2)
-                    passing = input().lower()
-                    if passing == 'done':
-                        flagdone = False
-
+                    if input().lower() == 'done':
+                        break
                     else:
-                        flagdone = True
-
+                        continue
     # DO_NOT_EDIT_ANYTHING_BELOW_THIS_LINE
 except:
     f.close()
